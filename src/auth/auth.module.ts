@@ -18,7 +18,7 @@ dotenv.config();
     UserModule,
     MongooseModule.forFeature([{name:'User', schema:UserSchema}]),
     PassportModule.register({defaultStrategy:"jwt"}),
-    JwtModule.register({secret:"myttSecretKey", signOptions:{expiresIn:3600}}),
+    JwtModule.register({secret:process.env.JWTSECRETKEY, signOptions:{expiresIn:3600}}),
   ],
   providers: [AuthService, JwtStrategy, ConfigService, RefreshTokenStrategy],
   controllers: [AuthController]

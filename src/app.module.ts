@@ -10,7 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal:true}), 
-    MongooseModule.forRoot("mongodb+srv://Ba_Wala:b.etude.17@cluster0.ntrqw.mongodb.net/?retryWrites=true&w=majority"),
+    MongooseModule.forRoot(process.env.MONGODB),
     AuthModule, 
     UserModule
   ],
