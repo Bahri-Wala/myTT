@@ -1,15 +1,22 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { createUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { RefreshTokenGuard } from './guard/refreshToken.guard';
+import { UserService } from 'src/user/user.service';
+import SmsService from './sms/sms.service';
+import { Sms } from './sms/sms.schema';
 
 @Controller()
 export class AuthController {
-    constructor(private authService: AuthService){}
+    constructor(
+        private authService: AuthService, 
+        private userService:UserService,
+        private smsService: SmsService
+    ){}
 
     @Post("login")
     async login(@Body() user:AuthDto, @Res() response){
@@ -18,7 +25,7 @@ export class AuthController {
     }
 
     @Post("register")
-    async register(@Body() user:createUserDto, @Res() response){
+    async register(@Body() user:CreateUserDto, @Res() response){
         try{
             const newUser = await this.authService.register(user) ;
             return response.status(HttpStatus.CREATED).json(newUser) ;
@@ -39,5 +46,33 @@ export class AuthController {
     const userId = req.body['id'];
     const refreshToken = req.body['refreshToken'];
     return this.authService.refreshTokens(userId, refreshToken);
+    }
+
+    @Post('send-code')
+    async sendVerificationCode(@Body() data, @Res() response) {
+        if(await this.userService.findOne({phone:data.phone})){
+            throw new BadRequestException('Phone number already used');}
+        const code = this.smsService.generateCode();
+        const sms = {phone:data.phone,code:code}
+        try{
+            await this.smsService.create(sms)
+            await this.authService.sendActivationCode(sms);
+            return response.status(HttpStatus.CREATED).json(sms) ;
+        }catch(e){
+            return response.status(HttpStatus.BAD_REQUEST).send(e)
+        }
+    }
+
+    @Post('verify-code')
+    async verifyCode(@Body() data:Partial<Sms>, @Res() response){
+        const sms = await this.smsService.findOne(data.phone);
+        console.log(sms);
+        if(!sms)
+            throw new BadRequestException('code has expired! please try again');
+        if(sms.code == data.code){
+            await this.smsService.delete(data.phone);
+            return response.status(HttpStatus.CREATED).json(sms) ;
+        } else
+            throw new BadRequestException("code doesn't match");
     }
 }

@@ -1,12 +1,15 @@
 /* eslint-disable prettier/prettier */
-import { IsString, MinLength, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, MinLength, IsNotEmpty, Matches, IsBoolean } from 'class-validator';
+import { defaultIfEmpty } from 'rxjs';
 
 
-export class createUserDto {
+export class CreateUserDto {
 
   @IsString()
   @MinLength(8,{message:"phone number length is less than 8!"})
   @IsNotEmpty({message:"phone is empty!"}) 
+  @Matches(/^[259]\d{7}$/)
   phone: string;
 
   @IsNotEmpty({message:"Pasword is empty!"})
@@ -22,7 +25,4 @@ export class createUserDto {
   @IsString()
   lastName: string;
 
-  @IsString()
-  @IsNotEmpty({message:"gender is empty!"})
-  gender
 }

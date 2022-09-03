@@ -22,12 +22,6 @@ export class User {
   @Prop({type:String,required:true,trim:true})
   lastName: string;
 
-  @Prop({type:String,required:true,trim:true})
-  gender
-
-  @Prop({type:Boolean,default:false})
-  active ;
-
   @Exclude()
   @Prop({type:String})
   salt ; 
