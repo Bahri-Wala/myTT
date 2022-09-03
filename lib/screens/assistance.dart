@@ -56,7 +56,7 @@ class _AssistanceState extends State<Assistance> {
           ]
         )
       ),
-      bottomNavigationBar: BottomNavBar()
+      //bottomNavigationBar: BottomNavBar(activeIndex: activeIndex)
     );
   }
 

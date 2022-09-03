@@ -7,32 +7,28 @@ import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
 class ConfirmationCode extends StatefulWidget {
+  const ConfirmationCode({Key? key, required this.phone}) : super(key: key);
+  final String phone;
   static const String routeName = "/confirmation-code";
+
   @override
   _ConfirmationCodeState createState() => _ConfirmationCodeState();
 }
 
 class _ConfirmationCodeState extends State<ConfirmationCode> {
-  final _signUpFormKey = GlobalKey<FormState>();
-  //final AuthService authService = AuthService();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool status = false;
-  bool eyeIcon_is_tap = false;
-  GlobalKey key = GlobalKey();
-  bool policy_check = false;
+  final _confirmationFormKey = GlobalKey<FormState>();
+  final TextEditingController _codeController = TextEditingController();
 
  
   @override
   void dispose(){
     super.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
+    _codeController.dispose();
   }
 
 
-  void signUp(){
-    AuthService.register(_phoneController.text, _passwordController.text);
+  void confirmCode(){
+    AuthService.confirmCode(widget.phone, _codeController.text);
   }
 
   @override
@@ -80,7 +76,7 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
               )
             ),
             Form(
-              key : _signUpFormKey,
+              key : _confirmationFormKey,
               child: Column(
                 children: [
                   Padding(
@@ -99,7 +95,7 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
                   Padding(
                     padding: EdgeInsets.only(left: 15, top: 15, right:15),
                     child: TextField(
-                      controller: _phoneController,
+                      controller: _codeController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                         labelText: 'Code SMS',
@@ -142,9 +138,9 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
                     child: TextButton(
                       onPressed: () {
                         //if(_signInFormKey.currentState!.validate()){
-                          //signUp();
+                          confirmCode();
                         //}
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => Register()));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => Register(phone:widget.phone)));
                       },
                       child: Text(
                         'Suivant',

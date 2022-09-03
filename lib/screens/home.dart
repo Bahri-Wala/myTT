@@ -164,7 +164,7 @@ class _HomeState extends State<Home> {
           ]
         )
       ),
-      bottomNavigationBar: BottomNavBar()
+      //bottomNavigationBar: BottomNavBar(activeIndex: activeIndex)
     );
   }
 

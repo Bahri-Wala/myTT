@@ -2,11 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:mytt_front/screens/confirmation.dart';
+import 'package:mytt_front/screens/login.dart';
 import 'package:mytt_front/services/auth_service.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
 class Register extends StatefulWidget {
+  const Register({Key? key, required this.phone}) : super(key: key);
+  final String phone;
   static const String routeName = "/send-code";
   @override
   _RegisterState createState() => _RegisterState();
@@ -14,26 +17,26 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final _signUpFormKey = GlobalKey<FormState>();
-  //final AuthService authService = AuthService();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool status = false;
-  bool eyeIcon_is_tap = false;
-  GlobalKey key = GlobalKey();
-  bool policy_check = false;
-
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  bool showText = false;
+  bool showText1 = false;
  
   @override
   void dispose(){
     super.dispose();
-    _phoneController.dispose();
+    _nameController.dispose();
+    _lastNameController.dispose();
+    _confirmPasswordController.dispose();
     _passwordController.dispose();
   }
 
 
   void signUp(){
-    AuthService.register(_phoneController.text, _passwordController.text);
-  }
+    AuthService.register(widget.phone, _nameController.text, _lastNameController.text, _passwordController.text, _confirmPasswordController.text);
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +91,10 @@ class _RegisterState extends State<Register> {
                     children: [
                       SizedBox(
                         width: 175,
-                        child: TextField(
+                        child: TextFormField(
+                          controller: _nameController,
+                          validator: (val){if(val!.isEmpty) {return 'Champs obligatoire!';}
+                                      return null;},
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                             labelText: 'Nom',
@@ -98,7 +104,10 @@ class _RegisterState extends State<Register> {
                       ),
                       SizedBox(
                         width: 175,
-                        child: TextField(
+                        child: TextFormField(
+                          controller: _lastNameController,
+                          validator: (val){if(val!.isEmpty) {return 'Champs obligatoire!';}
+                                      return null;},
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                             labelText: 'Prénom',
@@ -123,25 +132,48 @@ class _RegisterState extends State<Register> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 15, top: 10, right:15),
-                    child: TextField(
-                      controller: _phoneController,
+                    child: TextFormField(
+                      controller: _passwordController,
+                      obscureText: !showText,
+                      validator: (val){if(val!.isEmpty) {return 'Champs obligatoire!';}
+                                      return null;},
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                         labelText: 'Mot de passe personnel',
                         hintText: 'Entrez votre mot de passe',
                         prefixIcon: Icon(Icons.lock, color: Colors.blue),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.visibility, color: showText?Colors.blue:Color.fromARGB(255, 201, 201, 201)), 
+                          onPressed: () {
+                            setState(() {
+                              showText = !showText;
+                            });
+                          }
+                        )
                       ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(15),
-                    child: TextField(
-                      controller: _phoneController,
+                    child: TextFormField(
+                      controller: _confirmPasswordController,
+                      validator: (val){if(val!.isEmpty) {return 'champs obligatoire!';}
+                                      if(val != _passwordController.text){return "Les mots de passes ne sont pas identiques!";}
+                                      return null;},
+                      obscureText: !showText1,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                         labelText: 'Confirmer mot de passe',
                         hintText: 'Confirmez votre mot de passe',
                         prefixIcon: Icon(Icons.lock, color: Colors.blue),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.visibility, color: showText1?Colors.blue:Color.fromARGB(255, 201, 201, 201)), 
+                          onPressed: () {
+                            setState(() {
+                              showText1 = !showText1;
+                            });
+                          }
+                        )
                       ),
                     ),
                   ),
@@ -168,10 +200,10 @@ class _RegisterState extends State<Register> {
                         borderRadius: BorderRadius.circular(20)),
                       child: TextButton(
                         onPressed: () {
-                          //if(_signInFormKey.currentState!.validate()){
-                            //signUp();
-                          //}
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
+                          if(_signUpFormKey.currentState!.validate()){
+                            signUp();
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => Login()));
+                          }
                         },
                         child: Text(
                           'Valider',

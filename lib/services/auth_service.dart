@@ -3,9 +3,12 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mytt_front/models/auth_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:mytt_front/models/user.dart';
+import 'package:mytt_front/screens/home.dart';
 import 'package:mytt_front/services/dio/dio_service.dart';
 
 import '../constants/error_handling.dart';
@@ -13,26 +16,48 @@ import '../constants/error_handling.dart';
 class AuthService{
   AuthService._();
 
-  static Future<dynamic> login(phone, password) async {
-    print("logging in");
-    var response = await DioService.dio.post(DioService.url + 'login',
-        data: {"phone": phone, "password": password});
-    print("login data = ${response.data}");
-    DioService.setToken(
-        accessToken: response.data['access_token'],
-        refreshToken: response.data['refresh_token']);
-    return response;
+  static Future<dynamic> login(context, phone, password) async {
+    try{
+      print("logging in");
+      AuthModel user = AuthModel(phone: phone, password: password);
+      var response = await DioService.dio.post('${DioService.url}login',
+        data: user.toJson());
+      if (response.data["error"] != null) {
+        return response.data["error"];
+      } else {
+        DioService.setToken(
+          accessToken: response.data['access_token'],
+          refreshToken: response.data['refresh_token']);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
+        User user = User.fromJson(response.data["user"]);
+        return user;
+      }
+    } on DioError catch (e) {
+      print(e);
+    }
   }
 
 
-  static Future<dynamic> register(phone, password) async {
+  static Future<dynamic> register(phone, name, lastName, password, confPassword) async {
     print("signing up");
-    var response = await DioService.dio.post(DioService.url + 'register',
-        data: {"phone": phone, "password": password});
+    var response = await DioService.dio.post('${DioService.url}register',
+        data: {"phone": phone, "firstName":name, "lastName":lastName, "password": password});
     print("register data = ${response.data}");
-    DioService.setToken(
-        accessToken: response.data['access_token'],
-        refreshToken: response.data['refresh_token']);
+    return response;
+  }
+
+  static Future<dynamic> sendCode(phone) async {
+    print("sending code ...");
+    var response = await DioService.dio.post("${DioService.url}send-code", data: {"phone":phone});
+    print("data = ${response.data}");
+    return response;
+  }
+
+  static Future<dynamic> confirmCode(phone, code) async {
+    print("confirming code");
+    print("phone:${phone}, code:${code}");
+    var response = await DioService.dio.post('${DioService.url}verify-code', data:{"phone":phone, "code":code});
+    print("data= ${response.data}");
     return response;
   }
 
@@ -82,7 +107,7 @@ class AuthService{
 
 
   static Future<Map<String, String>> getAcessToken(String? refreshToken) async {
-    var response = await DioService.dio.post(DioService.url + 'refreshToken',
+    var response = await DioService.dio.post('${DioService.url}refreshToken',
         data: {'refreshToken': refreshToken});
     print("refresh token response = ${response.data}");
     return {'accessToken': response.data['accessToken']};

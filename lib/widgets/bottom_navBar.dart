@@ -2,16 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:mytt_front/screens/assistance.dart';
+import 'package:mytt_front/screens/baseWidget.dart';
 import 'package:mytt_front/screens/home.dart';
 
 
 class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({Key? key, required this.activeIndex}) : super(key: key);
+  final int activeIndex;
+
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int currentIndex = 0;
+  int currentIndex =0;
   bool homeLabel_visibility = true;
   bool infoLabel_visibility = false;
 
@@ -65,14 +69,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       IconButton(
                         icon: Icon(
                           Icons.home,
-                          color: currentIndex == 0 ? Colors.blue : Colors.grey.shade400,
+                          color: widget.activeIndex == 0 ? Colors.blue : Colors.grey.shade400,
                           size: 30,
                         ),
                         onPressed: () {
                           setBottomBarIndex(0);
                           homeLabel_visibility = !homeLabel_visibility;
                           infoLabel_visibility = false;
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Home(),activeIndex: 0)));
                         },
                         splashColor: Colors.white,
                       ),
@@ -90,14 +94,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       IconButton(
                         icon: Icon(
                           Icons.help,
-                          color: currentIndex == 1 ? Colors.blue : Colors.grey.shade400,
+                          color: widget.activeIndex == 1 ? Colors.blue : Colors.grey.shade400,
                           size: 30,
                         ),
                         onPressed: () {
-                          setBottomBarIndex(1);
+                          setBottomBarIndex(widget.activeIndex);
                           infoLabel_visibility = !infoLabel_visibility;
                           homeLabel_visibility = false;
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => Assistance()));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child:Assistance(), activeIndex: 1,)));
                         }
                       ),
                       Visibility(

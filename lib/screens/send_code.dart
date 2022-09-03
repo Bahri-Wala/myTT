@@ -13,26 +13,21 @@ class SendCode extends StatefulWidget {
 }
 
 class _SendCodeState extends State<SendCode> {
-  final _signUpFormKey = GlobalKey<FormState>();
-  //final AuthService authService = AuthService();
+  final _sendCodeFormKey = GlobalKey<FormState>();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool status = false;
-  bool eyeIcon_is_tap = false;
-  GlobalKey key = GlobalKey();
   bool policy_check = false;
+
 
  
   @override
   void dispose(){
     super.dispose();
     _phoneController.dispose();
-    _passwordController.dispose();
   }
 
 
-  void signUp(){
-    AuthService.register(_phoneController.text, _passwordController.text);
+  void sendCode(){
+    AuthService.sendCode(_phoneController.text);
   }
 
   @override
@@ -80,13 +75,15 @@ class _SendCodeState extends State<SendCode> {
               )
             ),
             Form(
-              key : _signUpFormKey,
+              key : _sendCodeFormKey,
               child: Column(
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: 15, top: 15, right:15),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _phoneController,
+                      validator: (val){if(val!.isEmpty) {return 'champs obligatoire!';}
+                                      return null;},
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                         labelText: 'Votre numéro TT*',
@@ -143,10 +140,10 @@ class _SendCodeState extends State<SendCode> {
                       borderRadius: BorderRadius.circular(20)),
                     child: TextButton(
                       onPressed: () {
-                        //if(_signInFormKey.currentState!.validate()){
-                          //signUp();
-                        //}
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ConfirmationCode()));
+                        if(_sendCodeFormKey.currentState!.validate() && policy_check){
+                          sendCode();
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ConfirmationCode(phone:_phoneController.text)));
+                        }
                       },
                       child: Text(
                         'Suivant',
