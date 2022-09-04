@@ -4,7 +4,9 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:mytt_front/models/user.dart';
 import 'package:mytt_front/screens/baseWidget.dart';
 import 'package:mytt_front/screens/send_code.dart';
+import 'package:mytt_front/screens/test.dart';
 import 'package:mytt_front/services/auth_service.dart';
+import 'package:mytt_front/services/user.service.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
@@ -309,7 +311,8 @@ class _LoginState extends State<Login> {
                 ),
                 borderRadius: BorderRadius.circular(20)),
               child: TextButton(
-                onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (_) => SendCode()));},
+                onPressed: () {},
+                  //Navigator.push(context, MaterialPageRoute(builder: (_) => Splash(rep)));},
                 child: Text(
                   'Mode invité',
                   style: TextStyle(color: Colors.white, fontSize: 25),

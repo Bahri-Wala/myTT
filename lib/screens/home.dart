@@ -92,6 +92,7 @@ class _HomeState extends State<Home> {
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "52 37 09 66",

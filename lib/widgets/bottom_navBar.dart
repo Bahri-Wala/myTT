@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:mytt_front/screens/account.dart';
 import 'package:mytt_front/screens/assistance.dart';
 import 'package:mytt_front/screens/baseWidget.dart';
 import 'package:mytt_front/screens/home.dart';
+import 'package:mytt_front/screens/menu.dart';
+import 'package:mytt_front/services/user.service.dart';
 
 
 class BottomNavBar extends StatefulWidget {
@@ -41,7 +44,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             heightFactor: 0.7,
             child: FloatingActionButton(
               elevation: 0.1, 
-              onPressed: () {},
+              onPressed: () {UserService.getUsers(context);},
               child: Container(
                 width: 70,
                 height: 70,
@@ -80,10 +83,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         },
                         splashColor: Colors.white,
                       ),
-                      Visibility(
-                        visible: homeLabel_visibility,
-                        child: Text("Acceuil",style: TextStyle(color: Colors.blue)),
-                      )
+                      // Visibility(
+                      //   visible: homeLabel_visibility,
+                      //   child: Text("Acceuil",style: TextStyle(color: Colors.blue)),
+                      // )
                     ],
                   ),
                 ),
@@ -104,10 +107,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child:Assistance(), activeIndex: 1,)));
                         }
                       ),
-                      Visibility(
-                        visible: infoLabel_visibility,
-                        child: Text("Assistance",style: TextStyle(color: Colors.blue)),
-                      )
+                      // Visibility(
+                      //   visible: infoLabel_visibility,
+                      //   child: Text("Assistance",style: TextStyle(color: Colors.blue)),
+                      // )
                     ],
                   ),
                 ),
@@ -117,25 +120,27 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 IconButton(
                   icon: Icon(
                     Icons.account_box,
-                    color: currentIndex == 2 ? Colors.blue : Colors.grey.shade400,
+                    color: widget.activeIndex == 2 ? Colors.blue : Colors.grey.shade400,
                     size: 30,
                   ),
                   onPressed: () {
-                    setBottomBarIndex(2);
+                    setBottomBarIndex(widget.activeIndex);
                     homeLabel_visibility = false;
                     infoLabel_visibility = false;
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => Account()));
                   }
                 ),
                 IconButton(
                   icon: Icon(
                     Icons.menu,
-                    color: currentIndex == 3 ? Colors.blue : Colors.grey.shade400,
+                    color: widget.activeIndex == 3 ? Colors.blue : Colors.grey.shade400,
                     size: 30,
                   ),
                   onPressed: () {
                     setBottomBarIndex(3);
                     homeLabel_visibility = false;
                     infoLabel_visibility = false;
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Menu(),activeIndex: 3)));
                   }
                 ),
               ],

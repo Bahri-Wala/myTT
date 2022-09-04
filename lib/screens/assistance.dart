@@ -13,7 +13,7 @@ class Assistance extends StatefulWidget{
 
 class _AssistanceState extends State<Assistance> {
   List<String> titles = ["Renseignement", "Réclamation", "Suggestion", "Historique", "Service client", "Service renseignement"];
-  List<Icon> icons = [Icon(Icons.info,size: 30,color: Colors.blue), Icon(Icons.report_problem,size: 30,color: Colors.blue), Icon(Icons.lightbulb,size: 30,color: Colors.blue), Icon(Icons.history,size: 30,color: Colors.blue), Icon(Icons.person,size: 30,color: Colors.blue), Icon(Icons.question_mark_rounded,size: 30,color: Colors.blue)];
+  List<Icon> icons = [Icon(Icons.info,size: 30,color: Colors.blue), Icon(Icons.report_problem,size: 30,color: Colors.blue), Icon(Icons.emoji_objects_outlined,size: 30,color: Colors.blue), Icon(Icons.history,size: 30,color: Colors.blue), Icon(Icons.person,size: 30,color: Colors.blue), Icon(Icons.question_mark_rounded,size: 30,color: Colors.blue)];
   int activeIndex = 1;
 
   @override
