@@ -33,7 +33,7 @@ export class AuthService {
   async genToken(user: User){
       const bdUser = await this.userModel.findOne({email:user.phone});
       const payload = {id:bdUser._id,phone:user.phone, firstName:user.firstName};
-      const accessToken = await this.jwtService.sign(payload,{secret: process.env.JWTSECRETKEY, expiresIn: '5m'});
+      const accessToken = await this.jwtService.sign(payload,{secret: process.env.JWTSECRETKEY, expiresIn: '3m'});
       const refreshToken = await this.jwtService.sign(payload,{secret: process.env.REFRESHSECRETKEY, expiresIn: '7d'});
       return [accessToken, refreshToken];
 
@@ -79,7 +79,7 @@ export class AuthService {
     const user = await this.userService.findById(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException('Access Denied');
-    const refreshTokenMatches = await argon2.verify(
+    const refreshTokenMatches = argon2.verify(
       user.refreshToken,
       refreshToken,
     );

@@ -34,17 +34,17 @@ export class AuthController {
         }  
     }
 
-    //@UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get("logout")
     logout(@Req() req: Request){
-        this.authService.logout(req.body["id"])
+        this.authService.logout(req.user["id"])
     }
 
     @UseGuards(RefreshTokenGuard)
-    @Get("refresh_token")
+    @Get("refresh-token")
     refreshTokens(@Req() req: Request) {
-    const userId = req.body['id'];
-    const refreshToken = req.body['refreshToken'];
+    const userId = req.user['id'];
+    const refreshToken = req.user['refreshToken'];
     return this.authService.refreshTokens(userId, refreshToken);
     }
 
