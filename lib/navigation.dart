@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mytt_front/screens/account.dart';
 import 'package:mytt_front/screens/assistance.dart';
 import 'package:mytt_front/screens/home.dart';
 import 'package:mytt_front/screens/login.dart';
+import 'package:mytt_front/screens/menu.dart';
 import 'package:mytt_front/screens/send_code.dart';
 import 'package:mytt_front/widgets/bottom_navBar.dart';
 
@@ -30,7 +32,7 @@ class Navigation extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: _buildNavigator(context),
-      bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: BottomNavBar(activeIndex:1),
     );
   }
 
@@ -38,6 +40,9 @@ class Navigation extends StatelessWidget {
     return {
       "/home": (context) {
         return Home();
+      },
+      "/assistance": (context) {
+        return Assistance();
       },
       '/account': (context) {
         return Account();

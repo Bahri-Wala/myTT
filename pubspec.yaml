@@ -45,6 +45,7 @@ dependencies:
   dio: ^4.0.6
   fresh_dio: ^0.3.2
   flutter_secure_storage: ^6.0.0
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

@@ -5,7 +5,7 @@ import 'package:mytt_front/services/dio/GeneralInterceptor.dart';
 import 'package:mytt_front/services/dio/PersistantTokenStorage.dart';
 
 class DioService {
-  static Dio _dio = new Dio();
+  static Dio _dio = Dio();
 
   static const url = 'http://192.168.56.1:3000/';
 

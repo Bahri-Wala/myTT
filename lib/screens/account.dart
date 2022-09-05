@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:mytt_front/screens/login.dart';
+import 'package:mytt_front/services/auth_service.dart';
+import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../widgets/bottom_navBar.dart';
 
@@ -17,6 +20,23 @@ class _AccountState extends State<Account> {
   List<Icon> icons = [Icon(Icons.speed,size: 30,color: Colors.blue), Icon(Icons.person_outline,size: 30,color: Colors.blue),  Icon(Icons.lock_outline,size: 30,color: Colors.blue), Icon(Icons.phone_locked_outlined,size: 30,color: Colors.blue), Icon(Icons.phonelink_setup_rounded,size: 30,color: Colors.blue), Icon(Icons.logout,size: 30,color: Colors.blue)];
   int activeIndex = 0;
 
+  void logout(){
+    final data = AuthService.logout();
+    data.then((value) {
+      print(value);
+      if ((value == "OK")) {
+        Navigator.push(context,  MaterialPageRoute(builder: (_) => Login()));
+      } else {
+        setState(() {
+          showDialog(
+            context: context, 
+            builder: (context) => ErrorAlert(message:"error")
+          );
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -26,7 +46,7 @@ class _AccountState extends State<Account> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top:250,bottom: 20),
+              padding: const EdgeInsets.only(top:235,bottom: 20),
               child: Center(
                 child: InkWell(
                   onTap: (() {
@@ -37,7 +57,7 @@ class _AccountState extends State<Account> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height*0.61,
+              height: screenSize.height*0.63,
               width: double.infinity,
               decoration: BoxDecoration( 
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
@@ -119,8 +139,21 @@ class _AccountState extends State<Account> {
                     padding: const EdgeInsets.only(left:20,right: 20),
                     itemBuilder: (context, index){return buildList(index);}, 
                     separatorBuilder: (context, index){return const SizedBox(height: 10);}, 
-                    itemCount: titles.length
+                    itemCount: titles.length-1
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal:20),
+                    child: Divider(thickness: 1.5,),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:20),
+                    child: InkWell(
+                      onTap: () {
+                        logout();
+                      },
+                      child: buildList(titles.length-1)
+                    ),
+                  )
                 ],
               ),
             ),

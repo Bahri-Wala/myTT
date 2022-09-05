@@ -28,6 +28,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     });
   }
 
+  // List<Widget> _widgetOptions = <Widget>[Home(),Assistance(),Account(),Menu()];
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -79,7 +81,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           setBottomBarIndex(0);
                           homeLabel_visibility = !homeLabel_visibility;
                           infoLabel_visibility = false;
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Home(),activeIndex: 0)));
+                          Navigator.of(context).pushNamed('/home');
+                          //Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Home(),activeIndex: 0)));
                         },
                         splashColor: Colors.white,
                       ),
@@ -104,7 +107,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           setBottomBarIndex(widget.activeIndex);
                           infoLabel_visibility = !infoLabel_visibility;
                           homeLabel_visibility = false;
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child:Assistance(), activeIndex: 1,)));
+                          Navigator.of(context).pushNamed('/assistance');
+                          //Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child:Assistance(), activeIndex: 1,)));
                         }
                       ),
                       // Visibility(

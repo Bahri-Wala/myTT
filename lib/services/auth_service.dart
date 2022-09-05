@@ -9,6 +9,8 @@ import 'package:mytt_front/models/auth_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:mytt_front/models/user.dart';
 import 'package:mytt_front/screens/home.dart';
+import 'package:mytt_front/screens/login.dart';
+import 'package:mytt_front/services/dio/PersistantTokenStorage.dart';
 import 'package:mytt_front/services/dio/dio_service.dart';
 
 import '../constants/error_handling.dart';
@@ -16,7 +18,7 @@ import '../constants/error_handling.dart';
 class AuthService{
   AuthService._();
 
-  static Future<dynamic> login(context, phone, password) async {
+  static Future<dynamic> login(phone, password) async {
     try{
       print("logging in");
       AuthModel user = AuthModel(phone: phone, password: password);
@@ -28,7 +30,6 @@ class AuthService{
         DioService.setToken(
           accessToken: response.data['access_token'],
           refreshToken: response.data['refresh_token']);
-        Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
         User user = User.fromJson(response.data["user"]);
         return user;
       }
@@ -107,9 +108,25 @@ class AuthService{
 
 
   static Future<Map<String, String>> getAcessToken(String? refreshToken) async {
-    var response = await DioService.dio.post('${DioService.url}refreshToken',
+    var response = await DioService.dio.post('${DioService.url}refresh-token',
         data: {'refreshToken': refreshToken});
     print("refresh token response = ${response.data}");
+
     return {'accessToken': response.data['accessToken']};
+  }
+
+  static Future<dynamic> logout() async {
+    try{
+      print("logging out");
+      var response = await DioService.dio.get('${DioService.url}logout');
+      if (response.data["error"] != null) {
+        return response.data["error"];
+      } else {
+        DioService.clearToken();
+        return "OK";
+      }
+    } on DioError catch (e) {
+      print(e);
+    }
   }
 }

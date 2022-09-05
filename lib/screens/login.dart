@@ -7,6 +7,7 @@ import 'package:mytt_front/screens/send_code.dart';
 import 'package:mytt_front/screens/test.dart';
 import 'package:mytt_front/services/auth_service.dart';
 import 'package:mytt_front/services/user.service.dart';
+import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
@@ -35,69 +36,16 @@ class _LoginState extends State<Login> {
 
 
   void signIn(){
-    final data = AuthService.login(context, _phoneController.text, _passwordController.text);
+    final data = AuthService.login(_phoneController.text, _passwordController.text);
     data.then((value) {
+      print(value);
       if ((value is User)) {
         Navigator.push(context,  MaterialPageRoute(builder: (_) => BaseWidget(child:Home(),activeIndex: 0,)));
       } else {
         setState(() {
           showDialog(
             context: context, 
-            builder: (context) => AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
-              title: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "Information",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 13, 9, 90),
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-              ),
-              content: Padding(
-                padding: const EdgeInsets.symmetric(horizontal:8.0),
-                child: Text("Login ou mot de passe invalide"),
-              ),
-              actions: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom:15),
-                    child: Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        boxShadow: const [BoxShadow(
-                          color: Color.fromARGB(255, 252, 114, 160),
-                          offset: Offset(5.0,5.0),
-                          blurRadius: 10.0,
-                          spreadRadius: 1.0,
-                        )],
-                        gradient: LinearGradient(
-                          begin: Alignment.centerRight,
-                          end: Alignment.centerLeft,
-                          colors: const [
-                            Color.fromARGB(255, 212, 187, 206),
-                            Color.fromARGB(255, 216, 43, 106),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          'OK',
-                          style: TextStyle(color: Colors.white, fontSize: 25),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
+            builder: (context) => ErrorAlert(message: "Login ou mot de passe incorrecte")
           );
         });
       }
