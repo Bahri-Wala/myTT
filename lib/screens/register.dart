@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:mytt_front/models/add_user.model.dart';
 import 'package:mytt_front/screens/confirmation.dart';
 import 'package:mytt_front/screens/login.dart';
 import 'package:mytt_front/services/auth_service.dart';
+import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
@@ -33,10 +35,21 @@ class _RegisterState extends State<Register> {
     _passwordController.dispose();
   }
 
-
-  void signUp(){
-    AuthService.register(widget.phone, _nameController.text, _lastNameController.text, _passwordController.text, _confirmPasswordController.text);
-  } 
+  void signUp() {
+    final data = AuthService.register(widget.phone, _nameController.text, _lastNameController.text, _passwordController.text, _confirmPasswordController.text);
+    data.then((value) {
+      if ((value is AddUserModel)) {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => Login()));
+      } else {
+        setState(() {
+          showDialog(
+            context: context, 
+            builder: (context) => ErrorAlert(message: "Erreur d'enregistrement!")
+          );
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +215,6 @@ class _RegisterState extends State<Register> {
                         onPressed: () {
                           if(_signUpFormKey.currentState!.validate()){
                             signUp();
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => Login()));
                           }
                         },
                         child: Text(

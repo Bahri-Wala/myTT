@@ -1,15 +1,19 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mytt_front/screens/login.dart';
 import 'package:mytt_front/services/auth_service.dart';
+import 'package:mytt_front/services/user.service.dart';
 import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../widgets/bottom_navBar.dart';
 
 class Account extends StatefulWidget{
-  const Account({super.key});
+  Account({super.key});
+  Future<dynamic> user = UserService.getUser();
 
   @override
   _AccountState createState() => _AccountState();
@@ -91,21 +95,39 @@ class _AccountState extends State<Account> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                "Bahri Wala",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16
-                                ),
+                              FutureBuilder(
+                                future: widget.user,
+                                builder: (context, snapshot) {
+                                  if(snapshot.hasData){
+                                    return Text(
+                                    "${snapshot.data.lastName} ${snapshot.data.firstName}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16
+                                    ),
+                                  );
+                                  }else{
+                                    return Text("Loading...");
+                                  }
+                                }
                               ),
-                              Text(
-                                "52 37 09 66",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16
-                                ),
+                              FutureBuilder(
+                                future: widget.user,
+                                builder: (context, snapshot) {
+                                  if(snapshot.hasData){
+                                    return Text(
+                                    snapshot.data.phone,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16
+                                    ),
+                                  );
+                                  }else{
+                                    return Text("Loading...");
+                                  }
+                                }
                               ),
                               Text(
                                 "Pre -1=11",

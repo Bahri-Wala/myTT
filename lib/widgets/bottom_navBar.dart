@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:mytt_front/models/user.dart';
 import 'package:mytt_front/screens/account.dart';
 import 'package:mytt_front/screens/assistance.dart';
 import 'package:mytt_front/screens/baseWidget.dart';
@@ -10,7 +11,7 @@ import 'package:mytt_front/services/user.service.dart';
 
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key, required this.activeIndex}) : super(key: key);
+  BottomNavBar({Key? key, required this.activeIndex}) : super(key: key);
   final int activeIndex;
 
   @override
@@ -18,6 +19,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
+  Future<dynamic> user = UserService.getUser();
   int currentIndex =0;
   bool homeLabel_visibility = true;
   bool infoLabel_visibility = false;
@@ -25,132 +27,128 @@ class _BottomNavBarState extends State<BottomNavBar> {
   setBottomBarIndex(index) {
     setState(() {
       currentIndex = index;
+      homeLabel_visibility = index==0 ? true:false;
+      infoLabel_visibility = index==3?false:!homeLabel_visibility;      
     });
   }
-
-  // List<Widget> _widgetOptions = <Widget>[Home(),Assistance(),Account(),Menu()];
+  
+  final List<Widget> _widgetOptions = <Widget>[Home(),Assistance(),Account(),Menu()];
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
-      width:size.width,
-      height: 80,
-      child: Stack(
-        children: [
-          CustomPaint(
-            size: Size(size.width, 80),
-            painter: BNBCustomPainter(),
-          ),
-          Center(
-            heightFactor: 0.7,
-            child: FloatingActionButton(
-              elevation: 0.1, 
-              onPressed: () {UserService.getUsers(context);},
-              child: Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(colors: [Color.fromARGB(255, 17, 11, 214), Colors.blue])
-                ),
-                child: Icon(
-                  Icons.chat,
-                  size: 30,
-                ),
-              )
+    return Scaffold(
+      body: _widgetOptions.elementAt(currentIndex) ,
+      bottomNavigationBar: Container(
+        width:size.width,
+        height: 80,
+        child: Stack(
+          children: [
+            CustomPaint(
+              size: Size(size.width, 80),
+              painter: BNBCustomPainter(),
             ),
-          ),
-          Container(
-            width: size.width,
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top:14),
-                  child: Column(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.home,
-                          color: widget.activeIndex == 0 ? Colors.blue : Colors.grey.shade400,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setBottomBarIndex(0);
-                          homeLabel_visibility = !homeLabel_visibility;
-                          infoLabel_visibility = false;
-                          Navigator.of(context).pushNamed('/home');
-                          //Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Home(),activeIndex: 0)));
-                        },
-                        splashColor: Colors.white,
-                      ),
-                      // Visibility(
-                      //   visible: homeLabel_visibility,
-                      //   child: Text("Acceuil",style: TextStyle(color: Colors.blue)),
-                      // )
-                    ],
+            Center(
+              heightFactor: 0.7,
+              child: FloatingActionButton(
+                elevation: 0.1, 
+                onPressed: () {UserService.getUsers();},
+                child: Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(colors: [Color.fromARGB(255, 17, 11, 214), Colors.blue])
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top:14),
-                  child: Column(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.help,
-                          color: widget.activeIndex == 1 ? Colors.blue : Colors.grey.shade400,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setBottomBarIndex(widget.activeIndex);
-                          infoLabel_visibility = !infoLabel_visibility;
-                          homeLabel_visibility = false;
-                          Navigator.of(context).pushNamed('/assistance');
-                          //Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child:Assistance(), activeIndex: 1,)));
-                        }
-                      ),
-                      // Visibility(
-                      //   visible: infoLabel_visibility,
-                      //   child: Text("Assistance",style: TextStyle(color: Colors.blue)),
-                      // )
-                    ],
-                  ),
-                ),
-                Container(
-                  width: size.width * 0.20,
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.account_box,
-                    color: widget.activeIndex == 2 ? Colors.blue : Colors.grey.shade400,
+                  child: Icon(
+                    Icons.chat,
                     size: 30,
                   ),
-                  onPressed: () {
-                    setBottomBarIndex(widget.activeIndex);
-                    homeLabel_visibility = false;
-                    infoLabel_visibility = false;
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => Account()));
-                  }
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.menu,
-                    color: widget.activeIndex == 3 ? Colors.blue : Colors.grey.shade400,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    setBottomBarIndex(3);
-                    homeLabel_visibility = false;
-                    infoLabel_visibility = false;
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Menu(),activeIndex: 3)));
-                  }
-                ),
-              ],
+                )
+              ),
             ),
-          )
-        ],
+            Container(
+              width: size.width,
+              height: 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top:14),
+                    child: Column(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.home,
+                            color: currentIndex == 0 ? Colors.blue : Colors.grey.shade400,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setBottomBarIndex(0);
+                            // homeLabel_visibility = !homeLabel_visibility;
+                            // infoLabel_visibility = false;
+                            //Navigator.of(context).pushNamed('/home');
+                            //Navigator.push(context, MaterialPageRoute(builder: (_) => BaseWidget(child: Home(),activeIndex: 0)));
+                          },
+                          splashColor: Colors.white,
+                        ),
+                        Visibility(
+                          visible: homeLabel_visibility,
+                          child: Text("Acceuil",style: TextStyle(color: Colors.blue)),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:14),
+                    child: Column(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.help,
+                            color: currentIndex == 1 ? Colors.blue : Colors.grey.shade400,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setBottomBarIndex(1);
+                          }
+                        ),
+                        Visibility(
+                          visible: infoLabel_visibility,
+                          child: Text("Assistance",style: TextStyle(color: Colors.blue)),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: size.width * 0.20,
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.account_box,
+                      color: currentIndex == 2 ? Colors.blue : Colors.grey.shade400,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      setBottomBarIndex(currentIndex);
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => Account()));
+                    }
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.menu,
+                      color: currentIndex == 3 ? Colors.blue : Colors.grey.shade400,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      setBottomBarIndex(3);
+                    }
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

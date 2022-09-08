@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:mytt_front/models/user.dart';
 import 'package:mytt_front/screens/baseWidget.dart';
+import 'package:mytt_front/screens/forgotPassword.dart';
+import 'package:mytt_front/screens/invite.dart';
 import 'package:mytt_front/screens/send_code.dart';
 import 'package:mytt_front/screens/test.dart';
 import 'package:mytt_front/services/auth_service.dart';
 import 'package:mytt_front/services/user.service.dart';
+import 'package:mytt_front/widgets/bottom_navBar.dart';
 import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
@@ -40,7 +43,7 @@ class _LoginState extends State<Login> {
     data.then((value) {
       print(value);
       if ((value is User)) {
-        Navigator.push(context,  MaterialPageRoute(builder: (_) => BaseWidget(child:Home(),activeIndex: 0,)));
+        Navigator.push(context,  MaterialPageRoute(builder: (_) => BottomNavBar(activeIndex: 0)));
       } else {
         setState(() {
           showDialog(
@@ -153,7 +156,7 @@ class _LoginState extends State<Login> {
                         padding: const EdgeInsets.only(left: 12),
                         child: TextButton(
                           onPressed: (){
-                            //TODO FORGOT PASSWORD SCREEN GOES HERE
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPassword()));
                           },
                           child: Text(
                             'Mot de passe oublié?',
@@ -225,7 +228,6 @@ class _LoginState extends State<Login> {
                           if(_signInFormKey.currentState!.validate()){
                             try{
                               signIn();
-                              // Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
                             }catch(e){print(e.toString());}
                           }
                         },
@@ -259,8 +261,9 @@ class _LoginState extends State<Login> {
                 ),
                 borderRadius: BorderRadius.circular(20)),
               child: TextButton(
-                onPressed: () {},
-                  //Navigator.push(context, MaterialPageRoute(builder: (_) => Splash(rep)));},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Invite()));
+                },
                 child: Text(
                   'Mode invité',
                   style: TextStyle(color: Colors.white, fontSize: 25),

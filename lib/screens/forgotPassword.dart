@@ -2,67 +2,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:mytt_front/models/sms_model.dart';
-import 'package:mytt_front/screens/register.dart';
-import 'package:mytt_front/screens/resetPassword.dart';
-import 'package:mytt_front/screens/send_code.dart';
+import 'package:mytt_front/screens/confirmation.dart';
 import 'package:mytt_front/services/auth_service.dart';
 import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
-class ConfirmationCode extends StatefulWidget {
-  const ConfirmationCode({Key? key, required this.phone, required this.title}) : super(key: key);
-  final String phone;
-  final String title;
-  static const String routeName = "/confirmation-code";
-
+class ForgotPassword extends StatefulWidget {
+  ForgotPassword({Key? key}) : super(key: key);
+  static const String routeName = "/send-code";
   @override
-  _ConfirmationCodeState createState() => _ConfirmationCodeState();
+  _ForgotPasswordState createState() => _ForgotPasswordState();
 }
 
-class _ConfirmationCodeState extends State<ConfirmationCode> {
-  final _confirmationFormKey = GlobalKey<FormState>();
-  final TextEditingController _codeController = TextEditingController();
+class _ForgotPasswordState extends State<ForgotPassword> {
+  final _sendCodeFormKey = GlobalKey<FormState>();
+  final TextEditingController _phoneController = TextEditingController();
+
 
  
   @override
   void dispose(){
     super.dispose();
-    _codeController.dispose();
+    _phoneController.dispose();
   }
 
-  void confirmCode() {
-    final data = AuthService.confirmCode(widget.phone, _codeController.text);
+
+  void sendCode() {
+    final data = AuthService.sendCode(_phoneController.text,true);
     data.then((value) {
       if ((value is SmsModel)) {
-        if(widget.title == "Inscription"){
-          Navigator.push(context, MaterialPageRoute(builder: (_) => Register(phone:widget.phone)));
-        }else{
-          Navigator.push(context, MaterialPageRoute(builder: (_) => ResetPassword(phone:widget.phone)));
-        }
+        Navigator.push(context, MaterialPageRoute(builder: (_) => ConfirmationCode(phone:_phoneController.text, title:"Mot de passe oublié")));
       } else {
         setState(() {
           showDialog(
             context: context, 
-            builder: (context) => ErrorAlert(message: "Code incorrecte!")
-          );
-        });
-      }
-    });
-  }
-
-  void sendCode(phone) {
-    bool forgot = true;
-    if(widget.title == "Inscription"){
-      forgot = false;
-    }
-    final data = AuthService.sendCode(phone,forgot);
-    data.then((value) {
-      if ((value is! SmsModel)) {
-        setState(() {
-          showDialog(
-            context: context, 
-            builder: (context) => ErrorAlert(message: "Code deja envoyé!")
+            builder: (context) => ErrorAlert(message: "Numéro deja utilisé!")
           );
         });
       }
@@ -92,7 +67,7 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(
-                  widget.title,
+                  "Mot de passe oublié",
                   style: TextStyle(
                     color: Color.fromARGB(255, 13, 9, 90),
                     fontSize: 30,
@@ -106,7 +81,7 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  "Code vérification",
+                  "Veuillez entrer ci-dessous vos informations",
                   style: TextStyle(
                     fontSize: 18
                   ),
@@ -114,50 +89,20 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
               )
             ),
             Form(
-              key : _confirmationFormKey,
+              key : _sendCodeFormKey,
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 15),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Veuillez saisir votre code sms:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18
-                        ),
-                      )
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 15, top: 15, right:15),
+                    padding: EdgeInsets.only(left: 15, top: 15, right:15, bottom:20),
                     child: TextFormField(
-                      controller: _codeController,
-                      validator:  (val){if(val!.isEmpty) {return 'champs obligatoire!';}
-                                  return null;},
+                      controller: _phoneController,
+                      validator: (val){if(val!.isEmpty) {return 'champs obligatoire!';}
+                                      return null;},
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                        labelText: 'Code SMS',
-                        hintText: 'Entrez votre code de confirmation',
-                        prefixIcon: Icon(Icons.lock, color: Colors.blue),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: InkWell(
-                      onTap: () {
-                        sendCode(widget.phone);
-                      },
-                      child: Text(
-                        "Je n'ai pas reçu mon code SMS",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          decoration: TextDecoration.underline,
-                        ),
+                        labelText: 'Votre numéro TT*',
+                        hintText: 'Entrez votre numéro de telephone',
+                        prefixIcon: Icon(Icons.phone, color: Colors.blue),
                       ),
                     ),
                   ),
@@ -182,9 +127,9 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
                       borderRadius: BorderRadius.circular(20)),
                     child: TextButton(
                       onPressed: () {
-                        //if(_signInFormKey.currentState!.validate()){
-                          confirmCode();
-                        //}
+                        if(_sendCodeFormKey.currentState!.validate()){
+                          sendCode();
+                        }
                       },
                       child: Text(
                         'Suivant',
@@ -193,6 +138,13 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50,horizontal: 25),
+              child: Text(
+                "*Vous allez recevoir un sms contenant votre code de confirmation",
+                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(
@@ -212,5 +164,4 @@ class _ConfirmationCodeState extends State<ConfirmationCode> {
       ),
     );
   }
-
 }

@@ -1,12 +1,16 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:mytt_front/models/user.dart';
+import 'package:mytt_front/services/user.service.dart';
+import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../widgets/bottom_navBar.dart';
 
 class Home extends StatefulWidget{
-  const Home({super.key});
+  Home({super.key});
+  Future<dynamic> user = UserService.getUser();
 
   @override
   _HomeState createState() => _HomeState();
@@ -45,7 +49,7 @@ class _HomeState extends State<Home> {
                       child: const Image(image: AssetImage('lib/asset/images/logo1.png'))
                     ),
                   ),
-                  const Align(
+                  Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 20.0),
@@ -58,18 +62,28 @@ class _HomeState extends State<Home> {
                       ),
                     )
                   ),      
-                  const Align(
+                  Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 20.0, top: 5),
-                      child: Text(
-                        "Bahri Wala",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
+                      child: FutureBuilder(
+                        future: widget.user,
+                        builder: (context,snapshot){
+                          if(snapshot.hasData){
+                            print(snapshot.data);
+                            return Text(
+                                  "${snapshot.data.lastName} ${snapshot.data.firstName}",         //"${snapshot.data.lastName} ${snapshot.data.firstName}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold
+                                  )
+                                );
+                          }else{
+                            return Text("Loading...");
+                          }
+                        }
+                      )
                     )
                   ),
                   Padding(
@@ -94,13 +108,22 @@ class _HomeState extends State<Home> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "52 37 09 66",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16
-                                ),
+                              FutureBuilder(
+                                future: widget.user,
+                                builder: (context, snapshot) {
+                                  if(snapshot.hasData){
+                                    return Text(
+                                    snapshot.data.phone,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16
+                                    ),
+                                  );
+                                  }else{
+                                    return Text("Loading...");
+                                  }
+                                }
                               ),
                               Text(
                                 "Pre -1=11",

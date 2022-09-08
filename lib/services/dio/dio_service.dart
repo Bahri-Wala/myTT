@@ -71,6 +71,7 @@ class DioService {
   }) {
     print("accessToken=$accessToken");
     print("refreshToken=$refreshToken");
+    _dio.options.headers = {"authorization": "Bearer $accessToken"};
     _fresh.setToken(
         OAuth2Token(accessToken: accessToken, refreshToken: refreshToken));
   }

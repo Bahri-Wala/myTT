@@ -1,44 +1,47 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:mytt_front/models/sms_model.dart';
+import 'package:mytt_front/models/add_user.model.dart';
+import 'package:mytt_front/models/user.dart';
 import 'package:mytt_front/screens/confirmation.dart';
+import 'package:mytt_front/screens/login.dart';
 import 'package:mytt_front/services/auth_service.dart';
 import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:show_more_text_popup/show_more_text_popup.dart';
 import 'home.dart';
 
-class SendCode extends StatefulWidget {
-  SendCode({Key? key}) : super(key: key);
+class ResetPassword extends StatefulWidget {
+  const ResetPassword({Key? key, required this.phone}) : super(key: key);
+  final String phone;
   static const String routeName = "/send-code";
   @override
-  _SendCodeState createState() => _SendCodeState();
+  _ResetPasswordState createState() => _ResetPasswordState();
 }
 
-class _SendCodeState extends State<SendCode> {
-  final _sendCodeFormKey = GlobalKey<FormState>();
-  final TextEditingController _phoneController = TextEditingController();
-  bool policy_check = false;
-
-
+class _ResetPasswordState extends State<ResetPassword> {
+  final _signUpFormKey = GlobalKey<FormState>();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  bool showText = false;
+  bool showText1 = false;
  
   @override
   void dispose(){
     super.dispose();
-    _phoneController.dispose();
+    _confirmPasswordController.dispose();
+    _passwordController.dispose();
   }
 
-
-  void sendCode() {
-    final data = AuthService.sendCode(_phoneController.text,false);
+  void updatePassword() {
+    final data = AuthService.updatePassword(widget.phone,_passwordController.text,_confirmPasswordController.text);
     data.then((value) {
-      if ((value is SmsModel)) {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ConfirmationCode(phone:_phoneController.text, title:"Inscription")));
+      if ((value is User)) {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => Login()));
       } else {
         setState(() {
           showDialog(
             context: context, 
-            builder: (context) => ErrorAlert(message: "Numéro deja utilisé!")
+            builder: (context) => ErrorAlert(message: "Erreur d'enregistrement!")
           );
         });
       }
@@ -68,7 +71,7 @@ class _SendCodeState extends State<SendCode> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(
-                  "Inscription",
+                  "Mot de passe oublié",
                   style: TextStyle(
                     color: Color.fromARGB(255, 13, 9, 90),
                     fontSize: 30,
@@ -82,7 +85,7 @@ class _SendCodeState extends State<SendCode> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  "Veuillez entrer ci-dessous vos informations",
+                  "Veuillez saisir les informations ci-dessous",
                   style: TextStyle(
                     fontSize: 18
                   ),
@@ -90,68 +93,71 @@ class _SendCodeState extends State<SendCode> {
               )
             ),
             Form(
-              key : _sendCodeFormKey,
+              key : _signUpFormKey,
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 15, top: 15, right:15),
+                    padding: const EdgeInsets.only(left: 15, top: 20),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Mot de passe",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15, top: 10, right:15),
                     child: TextFormField(
-                      controller: _phoneController,
-                      validator: (val){if(val!.isEmpty) {return 'champs obligatoire!';}
+                      controller: _passwordController,
+                      obscureText: !showText,
+                      validator: (val){if(val!.isEmpty) {return 'Champs obligatoire!';}
                                       return null;},
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                        labelText: 'Votre numéro TT*',
-                        hintText: 'Entrez votre numéro de telephone',
-                        prefixIcon: Icon(Icons.phone, color: Colors.blue),
+                        labelText: 'Mot de passe personnel',
+                        hintText: 'Entrez votre mot de passe',
+                        prefixIcon: Icon(Icons.lock, color: Colors.blue),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.visibility, color: showText?Colors.blue:Color.fromARGB(255, 201, 201, 201)), 
+                          onPressed: () {
+                            setState(() {
+                              showText = !showText;
+                            });
+                          }
+                        )
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20),
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value:  policy_check,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          onChanged: (bool? value){
-                            setState(() { policy_check = value!;});
-                          },
-                          activeColor: Colors.pink,
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            text: "J'ai lu et j'accepte ",
-                            style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-                            children: const [
-                              TextSpan(
-                                text: "les conditions générales \nd'utilisation",
-                                style: TextStyle(fontWeight: FontWeight.normal)
-                              )
-                            ]
-                          )
-                        ),
-                      ],
-                    )
-                  ),
-                  Visibility(
-                    visible: !policy_check,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left:60),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          "*Il faut lire et accepter les conditions générales d'utilisation!",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 12 
-                          )
-                        ),
+                    padding: EdgeInsets.all(15),
+                    child: TextFormField(
+                      controller: _confirmPasswordController,
+                      validator: (val){if(val!.isEmpty) {return 'champs obligatoire!';}
+                                      if(val != _passwordController.text){return "Les mots de passes ne sont pas identiques!";}
+                                      return null;},
+                      obscureText: !showText1,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                        labelText: 'Confirmer mot de passe',
+                        hintText: 'Confirmez votre mot de passe',
+                        prefixIcon: Icon(Icons.lock, color: Colors.blue),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.visibility, color: showText1?Colors.blue:Color.fromARGB(255, 201, 201, 201)), 
+                          onPressed: () {
+                            setState(() {
+                              showText1 = !showText1;
+                            });
+                          }
+                        )
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top:20),
+                    padding: const EdgeInsets.only(top:25),
                     child: Container(
                       height: 50,
                       width: 350,
@@ -173,25 +179,18 @@ class _SendCodeState extends State<SendCode> {
                         borderRadius: BorderRadius.circular(20)),
                       child: TextButton(
                         onPressed: () {
-                          if(_sendCodeFormKey.currentState!.validate() && policy_check){
-                            sendCode();
+                          if(_signUpFormKey.currentState!.validate()){
+                            updatePassword();
                           }
                         },
                         child: Text(
-                          'Suivant',
+                          'Valider',
                           style: TextStyle(color: Colors.white, fontSize: 25),
                         ),
                       ),
                     ),
                   ),
                 ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50,horizontal: 25),
-              child: Text(
-                "*Vous allez recevoir un sms contenant votre code de confirmation",
-                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(
@@ -212,3 +211,4 @@ class _SendCodeState extends State<SendCode> {
     );
   }
 }
+
