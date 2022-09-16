@@ -10,15 +10,26 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../widgets/bottom_navBar.dart';
 
 class Factures extends StatefulWidget{
-  Future<dynamic> factures = FactureService.getFactures();
+  //Future<dynamic> factures = FactureService.getFactures();
 
   @override
   _FacturesState createState() => _FacturesState();
 }
 
 class _FacturesState extends State<Factures> {
+  String _searchResult = "";
+  TextEditingController _searchController = TextEditingController();
+  List<Future> filtered =[]; 
   List<String> titles = ["createdAt", "montant", "payement"];
   List table_titles = [{"numero":"Numéro","createdAt":"Date", "montant":"Montant", "payement":"Payement"}];
+
+  void fetchResults(factures){
+    factures.forEach((facture) => {
+      if(facture["numero"].contains(_searchResult)){
+        filtered.add(facture)
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +70,34 @@ class _FacturesState extends State<Factures> {
                 ),
               )
             ), 
-
+             Card(
+              child: ListTile(
+                leading: const Icon(Icons.search),
+                title: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Rechercher...', border: InputBorder.none
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _searchResult = value;
+                        print(_searchResult);
+                        //fetchResults(widget.factures);
+                      });
+                    }),
+                trailing: IconButton(
+                  icon: const Icon(Icons.cancel),
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _searchResult = '';
+                    });
+                  },
+                ),
+              ),
+            ),
             FutureBuilder(
-              future: widget.factures,
+              future: FactureService.getFactures(_searchResult),
               builder: (context, snapshot) {
                 if(snapshot.hasData){
                   return Row(

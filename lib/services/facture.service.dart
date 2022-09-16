@@ -8,15 +8,16 @@ class FactureService{
   FactureService._();
   static const url = 'http://192.168.56.1:3000/';
 
-  static Future<dynamic> getFactures() async {
+  static Future<dynamic> getFactures(String filter) async {
     try{
       print("getting bills...");
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = prefs.getString("token");
       if (token != null) {
-        final response = await http.get(Uri.parse("${url}facture/all"),
+        final response = await http.get(Uri.parse("${url}facture/filter?filter=$filter"),
           headers: {"content-type": "application/json", "authorization": "Bearer $token"},
         );
+        print("response!!!!!!!!!!: ${response.body}");
         return jsonDecode(response.body);
       }else{
         throw Exception("Token is Expired");

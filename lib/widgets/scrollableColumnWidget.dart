@@ -55,6 +55,7 @@ class _ScrollableColumnWidgetState extends State<ScrollableColumnWidget>{
               ),
             ),
             columns: [
+              DataColumn(label: Text('Type')),
               DataColumn(label: Text('Date')),
               DataColumn(label: Text('Montant')),
               DataColumn(label: Text('Payement')),
@@ -64,6 +65,10 @@ class _ScrollableColumnWidgetState extends State<ScrollableColumnWidget>{
               ...widget.data
                   .map((facture) => DataRow(
                         cells: [
+                          DataCell(
+                            Container(
+                              alignment: AlignmentDirectional.center,
+                              child: Text(facture["type"].toString()))),
                           DataCell(
                             Container(
                               alignment: AlignmentDirectional.center,
