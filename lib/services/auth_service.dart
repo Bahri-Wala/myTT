@@ -43,31 +43,6 @@ class AuthService{
   }
 
 
-
-
-
-
-  // static Future<dynamic> login(phone, password) async {
-  //   try{
-  //     print("logging in");
-  //     AuthModel user = AuthModel(phone: phone, password: password);
-  //     var response = await DioService.dio.post('${DioService.url}login',
-  //       data: user.toJson());
-  //     if (response.data["error"] != null) {
-  //       return response.data["error"];
-  //     } else {
-  //       DioService.setToken(
-  //         accessToken: response.data['access_token'],
-  //         refreshToken: response.data['refresh_token']);
-  //       User user = User.fromJson(response.data["user"]);
-  //       return user;
-  //     }
-  //   } on DioError catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-
   static dynamic register(phone, firstName, lastName, password, confPassword) async {
     try{
       print("signing up...");
@@ -86,13 +61,6 @@ class AuthService{
       print(e);
     }
   }
-  // static Future<dynamic> register(phone, name, lastName, password, confPassword) async {
-  //   print("signing up");
-  //   var response = await DioService.dio.post('${DioService.url}register',
-  //       data: {"phone": phone, "firstName":name, "lastName":lastName, "password": password});
-  //   print("register data = ${response.data}");
-  //   return response;
-  // }
 
   static dynamic sendCode(phone,forgot) async {
     try{
@@ -111,16 +79,6 @@ class AuthService{
       print(e);
     }
   }
-  // static Future<dynamic> sendCode(phone) async {
-  //   try{
-  //     print("sending code ...");
-  //     var response = await DioService.dio.post("${DioService.url}send-code", data: {"phone":phone});
-  //     print("data = ${response.data}");
-  //     return response;
-  //   }catch(e){
-  //     print(e);
-  //   }
-  // }
 
   static dynamic confirmCode(phone, code) async {
     try{
@@ -140,13 +98,6 @@ class AuthService{
       print(e);
     }
   }
-  // static Future<dynamic> confirmCode(phone, code) async {
-  //   print("confirming code");
-  //   print("phone:${phone}, code:${code}");
-  //   var response = await DioService.dio.post('${DioService.url}verify-code', data:{"phone":phone, "code":code});
-  //   print("data= ${response.data}");
-  //   return response;
-  // }
 
 
   static Future<Map<String, String>> getAcessToken(String? refreshToken) async {
@@ -158,39 +109,11 @@ class AuthService{
   }
 
   static dynamic logout() async {
-    // try{
-      print("logging out...");
-      // final token = prefs.getString("token");
-      // print("token!!!!: ${token}");
-      //final response = await http.get(Uri.parse('${url}logout'),headers: {"content-type": "application/json", "authorization": "Bearer $token"});
-      //final body = jsonDecode(response.body);
-      //print("body!!!!: $body");
-      // if (body["error"] != null) {
-      //   return body["error"];
-      // } else {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.clear();
-        print("token!!!!: ${prefs.getString("token")}");
-        return "OK";
-      // }
-    // }catch (e) {
-    //   print(e);
-    // }
+    print("logging out...");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    return "OK";
   }
-  // static Future<dynamic> logout() async {
-  //   try{
-  //     print("logging out");
-  //     var response = await DioService.dio.get('${DioService.url}logout');
-  //     if (response.data["error"] != null) {
-  //       return response.data["error"];
-  //     } else {
-  //       DioService.clearToken();
-  //       return "OK";
-  //     }
-  //   } on DioError catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   static dynamic updatePassword(phone, password, confPassword) async {
     try{

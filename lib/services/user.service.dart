@@ -15,7 +15,6 @@ class UserService{
     try{
       print("gettin users...");
       var response = await DioService.dio.get('${DioService.url}user');
-      print("response: ${response}");
       // if (response.data["error"] != null) {
       //   return response.data["error"];
       // } else {
@@ -34,7 +33,6 @@ class UserService{
       print("fetching user...");
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = prefs.getString("token");
-      print("user token!!!!: $token");
       if (token != null) {
         final response = await http.get(Uri.parse("${url}user"),
           headers: {"content-type": "application/json", "authorization": "Bearer ${token}"},
@@ -44,7 +42,6 @@ class UserService{
           return body["error"];
         }else {
           User user = User.fromJson(body);
-          print("user!!!: $user");
           return user;
         }
       }else{

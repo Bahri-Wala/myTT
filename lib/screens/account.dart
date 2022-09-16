@@ -27,7 +27,6 @@ class _AccountState extends State<Account> {
   void logout(){
     final data = AuthService.logout();
     data.then((value) {
-      print(value);
       if ((value == "OK")) {
         Navigator.push(context,  MaterialPageRoute(builder: (_) => Login()));
       } else {

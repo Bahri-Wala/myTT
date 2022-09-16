@@ -22,7 +22,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _signInFormKey = GlobalKey<FormState>();
-  //final AuthService authService = AuthService();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool status = false;
@@ -41,7 +40,6 @@ class _LoginState extends State<Login> {
   void signIn(){
     final data = AuthService.login(_phoneController.text, _passwordController.text);
     data.then((value) {
-      print(value);
       if ((value is User)) {
         Navigator.push(context,  MaterialPageRoute(builder: (_) => BottomNavBar(activeIndex: 0)));
       } else {
@@ -226,9 +224,7 @@ class _LoginState extends State<Login> {
                       child: TextButton(
                         onPressed: () {
                           if(_signInFormKey.currentState!.validate()){
-                            try{
-                              signIn();
-                            }catch(e){print(e.toString());}
+                            signIn();
                           }
                         },
                         child: Text(

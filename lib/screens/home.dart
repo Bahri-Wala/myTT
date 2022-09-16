@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mytt_front/models/user.dart';
+import 'package:mytt_front/screens/factures.dart';
 import 'package:mytt_front/services/user.service.dart';
 import 'package:mytt_front/widgets/error_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -70,7 +71,6 @@ class _HomeState extends State<Home> {
                         future: widget.user,
                         builder: (context,snapshot){
                           if(snapshot.hasData){
-                            print(snapshot.data);
                             return Text(
                                   "${snapshot.data.lastName} ${snapshot.data.firstName}",         //"${snapshot.data.lastName} ${snapshot.data.firstName}",
                                   style: TextStyle(
@@ -170,7 +170,7 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(left:20,right: 20),
               itemBuilder: (context, index){return buildList(index);}, 
               separatorBuilder: (context, index){return const SizedBox(height: 10);}, 
-              itemCount: titles.length
+              itemCount: titles.length,
             ),
             Padding(
               padding: const EdgeInsets.only(bottom:10, top:15),
@@ -293,27 +293,34 @@ class _HomeState extends State<Home> {
 
 
   Widget buildList(int index){
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20)
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(left:15),
-        child: Row(children: [
-          icons[index],
-          Padding(
-            padding: const EdgeInsets.only(left:12),
-            child: Text(
-              titles[index],
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16
+    return InkWell(
+      onTap: () {
+        if(titles[index] == "E-Facture"){
+          Navigator.push(context, MaterialPageRoute(builder: (_) => Factures()));
+        }
+      },
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20)
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left:15),
+          child: Row(children: [
+            icons[index],
+            Padding(
+              padding: const EdgeInsets.only(left:12),
+              child: Text(
+                titles[index],
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16
+                ),
               ),
-            ),
-          )
-        ]),
+            )
+          ]),
+        ),
       ),
     );
   }
