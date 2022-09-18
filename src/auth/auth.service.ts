@@ -33,7 +33,7 @@ export class AuthService {
   async genToken(user: User){
       const bdUser = await this.userModel.findOne({email:user.phone});
       const payload = {id:bdUser._id,phone:user.phone, firstName:user.firstName};
-      const accessToken = await this.jwtService.sign(payload,{secret: process.env.JWTSECRETKEY, expiresIn: '3m'});
+      const accessToken = await this.jwtService.sign(payload,{secret: process.env.JWTSECRETKEY, expiresIn: '1d'});
       const refreshToken = await this.jwtService.sign(payload,{secret: process.env.REFRESHSECRETKEY, expiresIn: '7d'});
       return [accessToken, refreshToken];
 

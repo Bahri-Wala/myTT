@@ -31,6 +31,13 @@ export class UserService{
     return updatedUser;
   }
 
+  async updatePassword(user: Partial<User>): Promise<User>{
+    const updatedUser = await this.userModel.findOneAndUpdate({phone:user.phone}, user);
+    updatedUser.password = undefined;
+    updatedUser.salt = undefined;
+    return updatedUser;
+  }
+
   async delete(id: string){
     await this.userModel.remove({ _id: id });
     return "user deleted successfully";

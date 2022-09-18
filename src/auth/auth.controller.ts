@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,6 +9,8 @@ import { RefreshTokenGuard } from './guard/refreshToken.guard';
 import { UserService } from 'src/user/user.service';
 import SmsService from './sms/sms.service';
 import { Sms } from './sms/sms.schema';
+import { User } from 'src/user/schemas/user.schema';
+import * as bcrypt from 'bcrypt';
 
 @Controller()
 export class AuthController {
@@ -37,7 +39,8 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get("logout")
     logout(@Req() req: Request){
-        this.authService.logout(req.user["id"])
+        console.log("tesssssssssssssssssst:"+req.headers["authorization"]);
+        this.authService.logout(req.user["id"]);
     }
 
     @UseGuards(RefreshTokenGuard)
@@ -50,7 +53,7 @@ export class AuthController {
 
     @Post('send-code')
     async sendVerificationCode(@Body() data, @Res() response) {
-        if(await this.userService.findOne({phone:data.phone})){
+        if(await this.userService.findOne({phone:data.phone}) && data.forgot == "false"){
             throw new BadRequestException('Phone number already used');}
         const code = this.smsService.generateCode();
         const sms = {phone:data.phone,code:code}
@@ -74,5 +77,24 @@ export class AuthController {
             return response.status(HttpStatus.CREATED).json(sms) ;
         } else
             throw new BadRequestException("code doesn't match");
+    }
+
+    @Post('update-password')
+    async updatePassword(@Body() data,@Res() response){
+        try{
+            const user = await this.userService.findOne({phone:data.phone});
+            if(!user)
+                throw new BadRequestException("user not found!");
+            if(data.password != data.confirmPassword)
+                throw new BadRequestException("passwords do not match!");
+            const hashedPassword = await bcrypt.hash(data.password,user.salt);
+            user.password = hashedPassword;
+            const newUser = await this.userService.updatePassword(user);
+            newUser.password = undefined;
+            newUser.salt = undefined;
+            return response.status(HttpStatus.CREATED).json(newUser);
+        }catch(e){
+            console.log(e);
+        }
     }
 }
