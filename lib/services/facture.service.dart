@@ -14,10 +14,9 @@ class FactureService{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = prefs.getString("token");
       if (token != null) {
-        final response = await http.get(Uri.parse("${url}facture/filter?filter=$filter"),
+        final response = await http.get(Uri.parse("${url}facture/search?filter=$filter"),
           headers: {"content-type": "application/json", "authorization": "Bearer $token"},
         );
-        print("response!!!!!!!!!!: ${response.body}");
         return jsonDecode(response.body);
       }else{
         throw Exception("Token is Expired");
@@ -51,27 +50,22 @@ class FactureService{
     }
   }
 
-  // static dynamic getUser() async {
-  //   try{
-  //     print("fetching bill...");
-  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     final token = prefs.getString("token");
-  //     if (token != null) {
-  //       final response = await http.get(Uri.parse("${url}user"),
-  //         headers: {"content-type": "application/json", "authorization": "Bearer ${token}"},
-  //       );
-  //       final body = jsonDecode(response.body);
-  //       if (body["error"] != null) {
-  //         return body["error"];
-  //       }else {
-  //         User user = User.fromJson(body);
-  //         return user;
-  //       }
-  //     }else{
-  //       throw new Exception("Token is Expired");
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
+  static Future<dynamic> filter(data) async {
+    try{
+      print("filtering bills...");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
+      if (token != null) {
+        final response = await http.post(Uri.parse("${url}facture/filter"),
+          headers: {"content-type": "application/json", "authorization": "Bearer $token"},
+          body: json.encode(data)
+        );
+        return jsonDecode(response.body);
+      }else{
+        throw Exception("Token is Expired");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }

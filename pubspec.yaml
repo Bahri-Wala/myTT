@@ -47,6 +47,7 @@ dependencies:
   flutter_secure_storage: ^6.0.0
   shared_preferences: ^2.0.15
   auto_route: ^3.0.4
+  datetime_picker_formfield: ^2.0.1
 
 dev_dependencies:
   flutter_test:
