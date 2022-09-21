@@ -10,7 +10,6 @@ import 'home.dart';
 
 class ForgotPassword extends StatefulWidget {
   ForgotPassword({Key? key}) : super(key: key);
-  static const String routeName = "/send-code";
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();
 }

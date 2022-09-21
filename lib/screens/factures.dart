@@ -23,7 +23,7 @@ class _FacturesState extends State<Factures> {
   TextEditingController _searchController = TextEditingController();
   List<String> titles = ["createdAt", "montant", "payement"];
   List table_titles = [{"numero":"Numéro","createdAt":"Date", "montant":"Montant", "payement":"Payement"}];
-  List<String> types = ["Tous","ADSL","FIXE","MOBILE"];
+  List<String> types = ["Tous","ADSL","FIXE","GSM"];
   String typesDropdownValue = "Tous";
   List<String> paymentFilter = ["Tous","payées seulement","Non payées seulement"];
   String paymentDropdownValue = "Tous";
@@ -262,7 +262,7 @@ class _FacturesState extends State<Factures> {
               ),
             ),
             FutureBuilder(
-              future: widget.factures,//FactureService.getFactures(_searchResult),
+              future: widget.factures,
               builder: (context, snapshot) {
                 if(snapshot.hasData){
                   return Row(
