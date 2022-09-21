@@ -12,6 +12,27 @@ export class FactureService {
         return await new this.factureModel(facture).save();
     }
 
+    async filter(data){
+        const conditions = [];
+        conditions.push({"owner": data.owner});
+        if(data.search){
+            conditions.push({"$or": [{"numero": {"$regex" : data.search, "$options": "i"}},{"type": {"$regex" : data.search, "$options": "i"}}]})
+        }
+        if(data.type){
+            conditions.push({"type":data.type});
+        }
+        if(data.payement != null){
+            conditions.push({"payement":data.payement});
+        }
+        if(data.startDate){
+            conditions.push({"createdAt":{"$gte": data.startDate}});
+        }
+        if(data.endDate){
+            conditions.push({"createdAt":{"$lte": data.endDate}});
+        }
+        return await this.factureModel.find({"$and":conditions},null,{sort:{createdAt:-1}});
+    }
+
     async getAll(){
         return this.factureModel.find();
     }
@@ -32,25 +53,4 @@ export class FactureService {
         return await this.factureModel.find( {"$or": [{"numero": {"$regex" : filter, "$options": "i"}},{"type": {"$regex" : filter, "$options": "i"}}]},null,{sort:{createdAt:-1}});
     }
 
-    async filter(data){
-        const conditions = [];
-        if(data.search){
-            conditions.push({"$or": [{"numero": {"$regex" : data.search, "$options": "i"}},{"type": {"$regex" : data.search, "$options": "i"}}]})
-        }
-        if(data.type){
-            conditions.push({"type":data.type});
-        }
-        if(data.payement != null){
-            conditions.push({"payement":data.payement});
-        }
-        if(data.startDate){
-            conditions.push({"createdAt":{"$gte": data.startDate}});
-        }
-        if(data.endDate){
-            conditions.push({"createdAt":{"$lte": data.endDate}});
-        }
-        if(conditions.length > 0)
-            return await this.factureModel.find({"$and":conditions},null,{sort:{createdAt:-1}});
-        else return await this.factureModel.find();
-    }
 }

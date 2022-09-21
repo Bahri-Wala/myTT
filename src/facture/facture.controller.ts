@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Put, Query, Res } from '@nestjs/common';
-import { response } from 'express';
+import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { response,Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FactureService } from './facture.service';
 import { Facture } from './schema/facture.schema';
 
 @Controller('facture')
+@UseGuards(JwtAuthGuard)
 export class FactureController {
     constructor(private factureService: FactureService){}
     
@@ -69,8 +71,9 @@ export class FactureController {
     }
 
     @Post("filter")
-    async filter(@Body() data:Partial<Facture>,@Res() response){
+    async filter(@Req() req: Request, @Body() data:Partial<Facture>,@Res() response){
         try{
+            data["owner"] = req.user["id"];
             const factures = await this.factureService.filter(data);
             return response.status(HttpStatus.CREATED).json(factures);
         }catch(e){
